@@ -7,7 +7,8 @@ export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: 
 
   for (const photo of photos) {
     allPublicIds.push(photo.public_id);
-    const label = photo.context?.custom?.car_label?.trim();
+    // Support both direct context and nested custom context from Cloudinary Search
+    const label = photo.context?.car_label?.trim() || photo.context?.custom?.car_label?.trim();
     const dateStr = photo.created_at ? photo.created_at.substring(0, 10) : 'Recent';
     const groupKey = label ? label : `Uploaded on ${dateStr}`;
 
@@ -94,7 +95,10 @@ export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: 
           <div class="photo-grid" id="${safeGroupId}">
             ${groupPhotos
               .map((photo) => {
-                const filename = photo.context?.custom?.original_filename || `${photo.public_id}.${photo.format}`;
+                const filename =
+                  photo.context?.original_filename ||
+                  photo.context?.custom?.original_filename ||
+                  `${photo.public_id}.${photo.format}`;
                 const sizeKb = Math.round(photo.bytes / 1024);
                 const thumbUrl = cloudinary.url(photo.public_id, {
                   width: 320,

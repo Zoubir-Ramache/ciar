@@ -44,6 +44,10 @@ export interface CloudinaryAssetResource {
   created_at: string;
   secure_url: string;
   context?: {
+    original_filename?: string;
+    car_label?: string;
+    uploaded_at?: string;
+    sender_id?: string;
     custom?: {
       original_filename?: string;
       car_label?: string;

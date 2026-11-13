@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
   const allPhotos = await listPhotos();
   const matchingPhotos = allPhotos.filter((p) => {
-    const carLabel = p.context?.custom?.car_label?.trim();
+    const carLabel = p.context?.car_label?.trim() || p.context?.custom?.car_label?.trim();
     const dateStr = p.created_at ? p.created_at.substring(0, 10) : 'Recent';
     const groupKey = carLabel ? carLabel : `Uploaded on ${dateStr}`;
     return groupKey.toLowerCase() === group.toLowerCase();
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     zipName = `all-cars-${dateTag}`;
   } else if (groupParam) {
     const matching = allPhotos.filter((p) => {
-      const carLabel = p.context?.custom?.car_label?.trim();
+      const carLabel = p.context?.car_label?.trim() || p.context?.custom?.car_label?.trim();
       const dateStr = p.created_at ? p.created_at.substring(0, 10) : 'Recent';
       const groupKey = carLabel ? carLabel : `Uploaded on ${dateStr}`;
       return groupKey.toLowerCase() === groupParam.toLowerCase();
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       const labels = Array.from(
         new Set(
           selectedPhotos
-            .map((p) => p.context?.custom?.car_label?.trim())
+            .map((p) => p.context?.car_label?.trim() || p.context?.custom?.car_label?.trim())
             .filter((l): l is string => Boolean(l))
         )
       );
