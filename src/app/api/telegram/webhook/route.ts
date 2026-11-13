@@ -42,9 +42,6 @@ export async function POST(req: NextRequest) {
     const bestPhoto = message.photo[message.photo.length - 1];
     fileId = bestPhoto.file_id;
     originalFilename = `photo_${Date.now()}_${bestPhoto.file_unique_id}.jpg`;
-  } else if (message.video) {
-    fileId = message.video.file_id;
-    originalFilename = message.video.file_name || `video_${Date.now()}.mp4`;
   }
 
   if (!fileId) {
