@@ -112,6 +112,9 @@ export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: 
                   format: photo.format,
                 });
 
+                const sender = photo.context?.sender_name || photo.context?.custom?.sender_name;
+                const senderText = sender ? ` &bull; <i>${escapeHtml(sender)}</i>` : '';
+
                 return `
               <div class="photo-item">
                 <div class="photo-card">
@@ -120,7 +123,7 @@ export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: 
                   </a>
                   <div class="photo-meta" title="${escapeHtml(filename)}">
                     <strong>${escapeHtml(filename)}</strong><br>
-                    ${sizeKb} KB
+                    ${sizeKb} KB${senderText}
                   </div>
                   <div style="margin-bottom:8px;">
                     <label style="cursor:pointer; font-size:12px;">

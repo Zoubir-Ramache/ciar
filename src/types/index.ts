@@ -48,11 +48,13 @@ export interface CloudinaryAssetResource {
     car_label?: string;
     uploaded_at?: string;
     sender_id?: string;
+    sender_name?: string;
     custom?: {
       original_filename?: string;
       car_label?: string;
       uploaded_at?: string;
       sender_id?: string;
+      sender_name?: string;
     };
   };
   tags: string[];

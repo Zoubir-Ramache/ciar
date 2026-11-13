@@ -16,7 +16,8 @@ export async function uploadStreamToCloudinary(
   metadata: {
     originalFilename: string;
     carLabel?: string;
-    senderId: number;
+    senderId?: number;
+    senderName?: string;
     uploadDateTag: string;
   }
 ): Promise<any> {
@@ -28,9 +29,14 @@ export async function uploadStreamToCloudinary(
 
   const contextData: Record<string, string> = {
     original_filename: metadata.originalFilename,
-    sender_id: String(metadata.senderId),
     uploaded_at: new Date().toISOString(),
   };
+  if (metadata.senderId) {
+    contextData.sender_id = String(metadata.senderId);
+  }
+  if (metadata.senderName) {
+    contextData.sender_name = metadata.senderName;
+  }
   if (metadata.carLabel) {
     contextData.car_label = metadata.carLabel;
   }

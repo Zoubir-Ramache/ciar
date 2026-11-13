@@ -21,11 +21,11 @@ export async function POST(req: NextRequest) {
   }
 
   const senderId = message.from?.id;
+  const senderName = message.from?.first_name || message.from?.username || 'User';
   const chatId = message.chat.id;
 
-  if (!senderId || (config.allowedUserIds.length > 0 && !config.allowedUserIds.includes(senderId))) {
-    return new Response('OK', { status: 200 });
-  }
+  // Open access: any Telegram user can send photos
+
 
   let fileId: string | null = null;
   let originalFilename = `photo_${Date.now()}.jpg`;
@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
       originalFilename,
       carLabel,
       senderId,
+      senderName,
       uploadDateTag: `date_${dateTag}`,
     });
 
