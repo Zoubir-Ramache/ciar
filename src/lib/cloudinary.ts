@@ -92,9 +92,9 @@ export async function updateCarLabel(publicIds: string[], newLabel: string): Pro
   const cleanLabel = newLabel.trim();
   const slug = cleanLabel.toLowerCase().replace(/[^a-z0-9_-]/g, '_');
 
-  // Update context custom metadata
+  // Update context custom metadata (Cloudinary expects "key=value" string format)
   await cloudinary.uploader.add_context(
-    { car_label: cleanLabel },
+    `car_label=${cleanLabel}`,
     publicIds
   );
 
