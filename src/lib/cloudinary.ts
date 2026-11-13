@@ -45,7 +45,7 @@ export async function uploadStreamToCloudinary(
     const upload = cloudinary.uploader.upload_stream(
       {
         folder: 'ciar',
-        resource_type: 'image',
+        resource_type: 'auto',
         tags,
         context: contextData,
       },
@@ -86,7 +86,7 @@ export function generateZipDownloadUrl(publicIds: string[], zipName: string = 'c
     public_ids: publicIds,
     target_public_id: safeName,
     flatten_folders: true,
-    resource_type: 'image',
+    resource_type: 'auto',
   });
 }
 

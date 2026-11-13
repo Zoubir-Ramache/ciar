@@ -32,15 +32,19 @@ export async function POST(req: NextRequest) {
 
   if (message.document) {
     const doc = message.document;
-    const mime = doc.mime_type || '';
-    if (mime.startsWith('image/') || mime === 'application/octet-stream') {
-      fileId = doc.file_id;
-      if (doc.file_name) originalFilename = doc.file_name;
+    fileId = doc.file_id;
+    if (doc.file_name) {
+      originalFilename = doc.file_name;
+    } else {
+      originalFilename = `file_${Date.now()}_${doc.file_unique_id}`;
     }
   } else if (message.photo && message.photo.length > 0) {
     const bestPhoto = message.photo[message.photo.length - 1];
     fileId = bestPhoto.file_id;
     originalFilename = `photo_${Date.now()}_${bestPhoto.file_unique_id}.jpg`;
+  } else if (message.video) {
+    fileId = message.video.file_id;
+    originalFilename = message.video.file_name || `video_${Date.now()}.mp4`;
   }
 
   if (!fileId) {

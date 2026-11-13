@@ -40,6 +40,16 @@ export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: 
   <div class="container">
     ${alertMsg ? `<div class="alert alert-info">${escapeHtml(alertMsg)}</div>` : ''}
 
+    <!-- Direct Web Upload Box -->
+    <div class="card" style="margin-bottom:15px; padding:10px 15px; background:#fff;">
+      <form method="POST" action="/upload" enctype="multipart/form-data">
+        <strong style="margin-right:8px;">Upload Photos / Files:</strong>
+        <input type="file" name="files" multiple required style="font-size:12px; margin-right:8px; vertical-align:middle;">
+        <input type="text" name="car_label" placeholder="Car name (optional)" class="form-control" style="width:180px; display:inline-block; margin-right:8px; vertical-align:middle;">
+        <button type="submit" class="btn btn-primary">Upload to Site</button>
+      </form>
+    </div>
+
     <form method="POST" id="mainForm" action="/download-zip">
       <!-- Main Actions Bar -->
       <div class="action-bar">
@@ -100,14 +110,19 @@ export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: 
                   photo.context?.custom?.original_filename ||
                   `${photo.public_id}.${photo.format}`;
                 const sizeKb = Math.round(photo.bytes / 1024);
-                const thumbUrl = cloudinary.url(photo.public_id, {
-                  width: 320,
-                  height: 240,
-                  crop: 'fill',
-                  quality: 'auto:good',
-                  format: 'jpg',
-                });
-                const downloadUrl = cloudinary.url(photo.public_id, {
+                const fmt = (photo.format || '').toLowerCase();
+                const isImage = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'heic', 'bmp', 'tiff'].includes(fmt);
+                const thumbUrl = isImage
+                  ? cloudinary.url(photo.public_id, {
+                      width: 320,
+                      height: 240,
+                      crop: 'fill',
+                      quality: 'auto:good',
+                      format: 'jpg',
+                    })
+                  : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23475569" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>';
+
+                const downloadUrl = photo.secure_url || cloudinary.url(photo.public_id, {
                   flags: 'attachment',
                   format: photo.format,
                 });
