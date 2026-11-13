@@ -1,3 +1,4 @@
+/* Windows 7 / IE11 & Old Browser Compatible CSS */
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -79,6 +80,15 @@ body {
   background-color: #1d4ed8;
 }
 
+.btn-success {
+  background-color: #16a34a;
+  color: #fff;
+  border-color: #15803d;
+}
+.btn-success:hover {
+  background-color: #15803d;
+}
+
 .btn-danger {
   background-color: #dc2626;
   color: #fff;
@@ -90,20 +100,48 @@ body {
 
 .action-bar {
   background: #e2e8f0;
-  padding: 10px 15px;
+  padding: 12px 15px;
   margin-bottom: 20px;
   border: 1px solid #cbd5e1;
   border-radius: 4px;
 }
 
+.grouping-bar {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #cbd5e1;
+}
+
+/* Photo Group Header */
+.group-header {
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-top: 25px;
+  margin-bottom: 12px;
+}
+
+.group-header:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 .group-title {
+  float: left;
   font-size: 16px;
   font-weight: bold;
   color: #1e293b;
-  border-bottom: 2px solid #cbd5e1;
-  padding-bottom: 6px;
-  margin-top: 20px;
-  margin-bottom: 15px;
+  line-height: 30px;
+}
+
+.group-actions {
+  float: right;
+}
+
+.group-actions a, .group-actions button {
+  margin-left: 6px;
 }
 
 .photo-grid {
@@ -180,11 +218,10 @@ body {
 }
 
 .form-control {
-  width: 100%;
-  padding: 8px 10px;
+  padding: 6px 10px;
   border: 1px solid #cbd5e1;
   border-radius: 3px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .alert {

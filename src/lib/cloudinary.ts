@@ -65,13 +65,41 @@ export async function listPhotos(): Promise<CloudinaryAssetResource[]> {
   return (result.resources || []) as CloudinaryAssetResource[];
 }
 
+export function sanitizeZipFilename(name: string): string {
+  const clean = name
+    .trim()
+    .replace(/[^a-zA-Z0-9_\-\s]/g, '')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_');
+  return clean || 'ciar-photos';
+}
+
 export function generateZipDownloadUrl(publicIds: string[], zipName: string = 'ciar-photos'): string {
+  const safeName = sanitizeZipFilename(zipName);
   return cloudinary.utils.download_zip_url({
     public_ids: publicIds,
-    target_public_id: zipName,
+    target_public_id: safeName,
     flatten_folders: true,
     resource_type: 'image',
   });
+}
+
+/**
+ * Updates or renames the car group label for an array of photo public_ids.
+ */
+export async function updateCarLabel(publicIds: string[], newLabel: string): Promise<void> {
+  if (publicIds.length === 0) return;
+  const cleanLabel = newLabel.trim();
+  const slug = cleanLabel.toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+
+  // Update context custom metadata
+  await cloudinary.uploader.add_context(
+    { car_label: cleanLabel },
+    publicIds
+  );
+
+  // Add the car tag
+  await cloudinary.uploader.add_tag(`car_${slug}`, publicIds);
 }
 
 export async function deletePhotos(publicIds: string[]): Promise<void> {
