@@ -86,7 +86,7 @@ export function generateZipDownloadUrl(publicIds: string[], zipName: string = 'c
     public_ids: publicIds,
     target_public_id: safeName,
     flatten_folders: true,
-    resource_type: 'auto',
+    resource_type: 'image',
   });
 }
 
