@@ -1,5 +1,5 @@
 import { CloudinaryAssetResource } from '@/types';
-import { cloudinary } from '@/lib/cloudinary';
+import { cloudinary, getFriendlyPhotoFilename } from '@/lib/cloudinary';
 
 export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: string): string {
   const groups: Record<string, CloudinaryAssetResource[]> = {};
@@ -105,10 +105,7 @@ export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: 
           <div class="photo-grid" id="${safeGroupId}">
             ${groupPhotos
               .map((photo) => {
-                const filename =
-                  photo.context?.original_filename ||
-                  photo.context?.custom?.original_filename ||
-                  `${photo.public_id}.${photo.format}`;
+                const friendlyFilename = getFriendlyPhotoFilename(photo);
                 const sizeKb = Math.round(photo.bytes / 1024);
                 const fmt = (photo.format || '').toLowerCase();
                 const isImage = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'heic', 'bmp', 'tiff'].includes(fmt);
@@ -122,10 +119,8 @@ export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: 
                     })
                   : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23475569" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>';
 
-                const downloadUrl = photo.secure_url || cloudinary.url(photo.public_id, {
-                  flags: 'attachment',
-                  format: photo.format,
-                });
+                // Clean day-based download URL
+                const downloadUrl = `/download-photo?id=${encodeURIComponent(photo.public_id)}&name=${encodeURIComponent(friendlyFilename)}`;
 
                 const sender = photo.context?.sender_name || photo.context?.custom?.sender_name;
                 const senderText = sender ? ` &bull; <i>${escapeHtml(sender)}</i>` : '';
@@ -133,11 +128,11 @@ export function renderGalleryPage(photos: CloudinaryAssetResource[], alertMsg?: 
                 return `
               <div class="photo-item">
                 <div class="photo-card">
-                  <a href="${downloadUrl}" target="_blank">
-                    <img src="${thumbUrl}" alt="${escapeHtml(filename)}" loading="lazy">
+                  <a href="${downloadUrl}">
+                    <img src="${thumbUrl}" alt="${escapeHtml(friendlyFilename)}" loading="lazy">
                   </a>
-                  <div class="photo-meta" title="${escapeHtml(filename)}">
-                    <strong>${escapeHtml(filename)}</strong><br>
+                  <div class="photo-meta" title="${escapeHtml(friendlyFilename)}">
+                    <strong>${escapeHtml(friendlyFilename)}</strong><br>
                     ${sizeKb} KB${senderText}
                   </div>
                   <div style="margin-bottom:8px;">

@@ -41,10 +41,20 @@ export async function uploadStreamToCloudinary(
     contextData.car_label = metadata.carLabel;
   }
 
+  // Generate a clean day-based public_id: YYYY-MM-DD_Car_HHhMMmSSs_random
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const timeStr = `${pad(now.getHours())}h${pad(now.getMinutes())}m${pad(now.getSeconds())}`;
+  const carSlug = metadata.carLabel ? `${metadata.carLabel.toLowerCase().replace(/[^a-z0-9_-]/g, '_')}_` : '';
+  const randomSuffix = Math.random().toString(36).substring(2, 6);
+  const publicId = `${dateStr}_${carSlug}${timeStr}_${randomSuffix}`;
+
   return new Promise((resolve, reject) => {
     const upload = cloudinary.uploader.upload_stream(
       {
         folder: 'ciar',
+        public_id: publicId,
         resource_type: 'auto',
         tags,
         context: contextData,
@@ -78,6 +88,27 @@ export function sanitizeZipFilename(name: string): string {
     .replace(/\s+/g, '_')
     .replace(/_+/g, '_');
   return clean || 'ciar-photos';
+}
+
+export function getFriendlyPhotoFilename(photo: CloudinaryAssetResource): string {
+  const dateStr = photo.context?.uploaded_at || photo.created_at || new Date().toISOString();
+  const d = new Date(dateStr);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const year = d.getFullYear();
+  const month = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const hours = pad(d.getHours());
+  const minutes = pad(d.getMinutes());
+  const seconds = pad(d.getSeconds());
+
+  const datePart = `${year}-${month}-${day}`;
+  const timePart = `${hours}h${minutes}m${seconds}s`;
+
+  const car = photo.context?.car_label?.trim() || photo.context?.custom?.car_label?.trim();
+  const carPart = car ? `_${car.replace(/[^a-zA-Z0-9_-]/g, '_')}` : '';
+  const ext = (photo.format || 'jpg').replace(/^\./, '');
+
+  return `${datePart}${carPart}_${timePart}.${ext}`;
 }
 
 export function generateZipDownloadUrl(publicIds: string[], zipName: string = 'ciar-photos'): string {

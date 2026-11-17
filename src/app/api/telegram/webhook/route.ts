@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { Readable } from 'stream';
 import { config } from '@/lib/config';
 import { TelegramUpdate } from '@/types';
-import { getTelegramFileUrl, sendTelegramMessage } from '@/lib/telegram';
+import { getTelegramFileUrl } from '@/lib/telegram';
 import { uploadStreamToCloudinary } from '@/lib/cloudinary';
 
 export const dynamic = 'force-dynamic';
@@ -66,12 +66,8 @@ export async function POST(req: NextRequest) {
       senderName,
       uploadDateTag: `date_${dateTag}`,
     });
-
-    const labelText = carLabel ? ` [${carLabel}]` : '';
-    await sendTelegramMessage(chatId, `Saved: ${originalFilename}${labelText}`);
   } catch (err: any) {
     console.error('Error handling Telegram photo upload:', err);
-    await sendTelegramMessage(chatId, `Failed to save photo: ${err.message || 'Server error'}`);
   }
 
   return new Response('OK', { status: 200 });
